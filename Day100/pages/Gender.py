@@ -1,0 +1,51 @@
+import streamlit as st
+import pandas as pd
+import plotly.express as px
+
+df_fatalities = pd.read_csv('Deaths_by_Police_US.csv', encoding="windows-1252")
+
+# TO DO
+# Create a Chart Comparing the Total Number of Deaths of Men and Women
+# Use `df_fatalities` to illustrate how many more men are killed compared to women.
+
+col1, col2 = st.columns(2)
+with col1:
+    gender_fatalities = df_fatalities['gender'].value_counts()
+
+    gender_map = {
+        'M': 'Men',
+        'F': 'Women',
+    }
+
+    gender_fatalities.index = gender_fatalities.index.map(gender_map)
+
+
+    fig = px.pie(
+        values=gender_fatalities.values,
+        names=gender_fatalities.index,
+        title="Deaths by Police: Men vs Women",
+        # hole=0.6
+    )
+
+    fig.update_traces(
+        textposition='inside',
+        textinfo='percent+label',
+        textfont_size=15
+    )
+
+    st.plotly_chart(fig, width="stretch")
+
+with col2:
+    fig_bar = px.bar(
+        x=gender_fatalities.index,
+        y=gender_fatalities.values,
+        text=gender_fatalities.values,
+        title="Total Number of Deaths by Gender"
+    )
+
+    fig_bar.update_layout(
+        xaxis_title="Gender",
+        yaxis_title="Number of Deaths"
+    )
+
+    st.plotly_chart(fig_bar, width='stretch')
